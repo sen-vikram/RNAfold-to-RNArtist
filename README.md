@@ -137,7 +137,7 @@ Copyright (c) 2025 **Vikram Sen** ([@sen-vikram](https://github.com/sen-vikram))
 - **Original Concept & Code**: Vikram Sen
 - **AI Assistance**: Code architecture and GUI development assisted by AI coding agents.
 - **Core Technologies**:
-  - [ViennaRNA Package](https://www.tbi.univie.ac.at/RNA/) (Folding Engine)
-  - [RNArtistCore](https://github.com/RNArtist/RNArtistCore) (Visualization)
+  - [ViennaRNA Package](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/api_python.html) (Folding Engine)
+  - [RNArtistCore](https://github.com/fjossinet/RNArtistCore) (Visualization)
   - [Matplotlib](https://matplotlib.org/) (Legacy CLI plotting)
   - [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) (UI Framework)
