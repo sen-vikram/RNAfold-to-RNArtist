@@ -1,0 +1,18 @@
+{
+    "folding_params": {
+        "temperature": 37.0,
+        "dangles": 2,
+        "noLP": false,
+        "noGU": false,
+        "noClosingGU": false,
+        "gquad": false,
+        "circ": false,
+        "max_bp_span": -1
+    },
+    "constraints": {
+        "enforce": false
+    },
+    "algorithms": {
+        "partition_function": true
+    }
+}

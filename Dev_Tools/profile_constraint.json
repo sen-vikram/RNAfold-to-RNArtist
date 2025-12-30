@@ -1,0 +1,27 @@
+{
+    "folding_params": {
+        "temperature": 37.0,
+        "dangles": 2,
+        "noLP": true,
+        "noGU": false,
+        "noClosingGU": false,
+        "gquad": false,
+        "circ": false,
+        "max_bp_span": -1
+    },
+    "constraints": {
+        "file": null,
+        "string": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "enforce": true
+    },
+    "shape_reactivity": {
+        "file": null,
+        "method": "Deigan",
+        "slope": 1.8,
+        "intercept": -0.6
+    },
+    "algorithms": {
+        "partition_function": true,
+        "mfe": true
+    }
+}

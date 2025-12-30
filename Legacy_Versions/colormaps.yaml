@@ -1,0 +1,284 @@
+# Comprehensive Matplotlib Colormaps for Scientific Visualization
+# Organized by category for RNA structure analysis and other scientific applications
+
+# =============================
+# SEQUENTIAL COLORMAPS
+# =============================
+# Single-hue progressions, ideal for probability data and continuous measurements
+sequential:
+  # Perceptually uniform (recommended for scientific data)
+  viridis: "Perceptually uniform, colorblind-friendly, excellent for probability data (dark to light)"
+  viridis_r: "Perceptually uniform, colorblind-friendly, excellent for probability data (light to dark)"
+  plasma: "High contrast, great for presentations, emphasizes differences (dark to light)"
+  plasma_r: "High contrast, great for presentations, emphasizes differences (light to dark)"
+  inferno: "Dramatic, good for presentations, emphasizes high values (dark to light)"
+  inferno_r: "Dramatic, good for presentations, emphasizes high values (light to dark)"
+  magma: "Smooth transitions, professional appearance (dark to light)"
+  magma_r: "Smooth transitions, professional appearance (light to dark)"
+  cividis: "Colorblind-friendly, good for grayscale printing (dark to light)"
+  cividis_r: "Colorblind-friendly, good for grayscale printing (light to dark)"
+  turbo: "High contrast, good for presentations, smooth transitions (dark to light)"
+  turbo_r: "High contrast, good for presentations, smooth transitions (light to dark)"
+  
+  # Blue-based (cool colors)
+  Blues: "Single blue hue, good for cold/negative values (light to dark)"
+  Blues_r: "Single blue hue, good for cold/negative values (dark to light)"
+  BuGn: "Blue to green, good for environmental data (light to dark)"
+  BuGn_r: "Blue to green, good for environmental data (dark to light)"
+  BuPu: "Blue to purple, good for genomic data (light to dark)"
+  BuPu_r: "Blue to purple, good for genomic data (dark to light)"
+  GnBu: "Green to blue, good for biological data (light to dark)"
+  GnBu_r: "Green to blue, good for biological data (dark to light)"
+  
+  # Green-based (natural colors)
+  Greens: "Single green hue, good for positive/natural data (light to dark)"
+  Greens_r: "Single green hue, good for positive/natural data (dark to light)"
+  
+  # Red-based (warm colors)
+  OrRd: "Orange to red, good for intensity data (light to dark)"
+  OrRd_r: "Orange to red, good for intensity data (dark to light)"
+  Oranges: "Single orange hue, good for warm/positive values (light to dark)"
+  Oranges_r: "Single orange hue, good for warm/positive values (dark to light)"
+  Reds: "Single red hue, good for hot/positive values (light to dark)"
+  Reds_r: "Single red hue, good for hot/positive values (dark to light)"
+  YlOrRd: "Yellow to orange to red, good for heat maps (light to dark)"
+  YlOrRd_r: "Yellow to orange to red, good for heat maps (dark to light)"
+  
+  # Purple-based
+  Purples: "Single purple hue, good for genomic/biological data (light to dark)"
+  Purples_r: "Single purple hue, good for genomic/biological data (dark to light)"
+  PuBu: "Purple to blue, good for genomic data (light to dark)"
+  PuBu_r: "Purple to blue, good for genomic data (dark to light)"
+  PuRd: "Purple to red, good for genomic data (light to dark)"
+  PuRd_r: "Purple to red, good for genomic data (dark to light)"
+  
+  # Gray-based
+  Greys: "Single gray hue, good for neutral data (light to dark)"
+  Greys_r: "Single gray hue, good for neutral data (dark to light)"
+  gray: "Alternative gray colormap (light to dark)"
+  gray_r: "Alternative gray colormap (dark to light)"
+  
+  # Multi-hue sequential
+  YlGn: "Yellow to green, good for environmental data (light to dark)"
+  YlGn_r: "Yellow to green, good for environmental data (dark to light)"
+  YlGnBu: "Yellow to green to blue, good for environmental data (light to dark)"
+  YlGnBu_r: "Yellow to green to blue, good for environmental data (dark to light)"
+  YlOrBr: "Yellow to orange to brown, good for geological data (light to dark)"
+  YlOrBr_r: "Yellow to orange to brown, good for geological data (dark to light)"
+  
+  # Specialized sequential
+  bone: "Gray with blue tint, good for medical imaging"
+  pink: "Pink to white, good for soft data visualization"
+  spring: "Magenta to yellow, good for seasonal data"
+  summer: "Green to yellow, good for environmental data"
+  autumn: "Red to yellow, good for seasonal data"
+  winter: "Blue to green, good for seasonal data"
+  copper: "Copper to white, good for geological data"
+  hot: "Black to red to yellow to white, good for heat maps"
+  cool: "Cyan to magenta, good for temperature data"
+  Wistia: "Yellow to red, good for heat visualization"
+
+# =============================
+# DIVERGING COLORMAPS
+# =============================
+# Two-hue progressions, ideal for data with a meaningful center point
+diverging:
+  # Red-Blue schemes (most common in science)
+  Spectral_r: "Rainbow-like, shows multiple levels clearly (default)"
+  RdBu_r: "Red-Blue, good contrast, standard scientific choice"
+  coolwarm: "Blue-Red, smooth transitions, excellent for base-pairing"
+  seismic: "Blue-Red, high contrast, good for structural data"
+  bwr: "Blue-White-Red, classic choice for diverging data"
+  RdYlBu_r: "Red-Yellow-Blue, good for base-pairing strength"
+  
+  # Alternative color schemes
+  PiYG: "Pink-Green, alternative to red-blue, good for biological data"
+  PRGn: "Purple-Green, modern alternative, good for genomic data"
+  BrBG: "Brown-Green, good for environmental data"
+  PuOr: "Purple-Orange, good for genomic data"
+  RdGy: "Red-Gray, good for neutral center point"
+  RdYlGn: "Red-Yellow-Green, good for environmental data"
+  
+  # Specialized diverging
+  twilight: "Circular diverging, good for periodic data"
+  twilight_shifted: "Shifted circular diverging, good for phase data"
+  hsv: "Hue-based diverging, good for complex data"
+  
+  # Additional diverging options
+  RdBu: "Red-Blue (non-reversed), standard diverging"
+  Spectral: "Rainbow (non-reversed), full spectrum"
+  RdYlBu: "Red-Yellow-Blue (non-reversed), standard choice"
+  
+  # Additional reverse diverging options
+  BrBG_r: "Brown-Green (reversed), good for environmental data"
+  PuOr_r: "Purple-Orange (reversed), good for genomic data"
+  RdGy_r: "Red-Gray (reversed), good for neutral center point"
+  RdYlGn_r: "Red-Yellow-Green (reversed), good for environmental data"
+
+# =============================
+# QUALITATIVE COLORMAPS
+# =============================
+# Distinct colors for categorical data
+qualitative:
+  # Tableau colors
+  tab10: "10 distinct colors, good for categorical data"
+  tab20: "20 distinct colors, good for many categories"
+  tab20b: "20 distinct colors (variant B), good for many categories"
+  tab20c: "20 distinct colors (variant C), good for many categories"
+  
+  # Set-based colors
+  Set1: "9 distinct colors, good for categorical data"
+  Set2: "8 distinct colors, good for categorical data"
+  Set3: "12 distinct colors, good for categorical data"
+  
+  # Paired colors
+  Paired: "12 paired colors, good for related categories"
+  Accent: "8 distinct colors, good for highlighting"
+  
+  # Additional qualitative
+  Dark2: "8 dark colors, good for printing"
+  Pastel1: "9 pastel colors, good for soft visualization"
+  Pastel2: "8 pastel colors, good for soft visualization"
+
+# =============================
+# CYCLIC COLORMAPS
+# =============================
+# Circular color schemes for periodic data
+cyclic:
+  twilight: "Circular blue to red, good for periodic data"
+  twilight_shifted: "Shifted circular, good for phase data"
+  hsv: "Hue-based circular, good for complex periodic data"
+
+# =============================
+# LEGACY AND SPECIALIZED COLORMAPS (auto-added for completeness)
+# =============================
+legacy_and_specialized:
+  berlin: "Legacy colormap (matplotlib)"
+  berlin_r: "Reversed legacy colormap (matplotlib)"
+  managua: "Legacy colormap (matplotlib)"
+  managua_r: "Reversed legacy colormap (matplotlib)"
+  vanimo: "Legacy colormap (matplotlib)"
+  vanimo_r: "Reversed legacy colormap (matplotlib)"
+  CMRmap: "Legacy colormap (matplotlib)"
+  CMRmap_r: "Reversed legacy colormap (matplotlib)"
+  PuBuGn: "Blue to green to purple (matplotlib)"
+  PuBuGn_r: "Reversed blue to green to purple (matplotlib)"
+  RdPu: "Red to purple (matplotlib)"
+  RdPu_r: "Reversed red to purple (matplotlib)"
+  afmhot: "AFM hot, good for atomic force microscopy"
+  afmhot_r: "Reversed AFM hot colormap"
+  binary: "Binary black/white colormap"
+  binary_r: "Reversed binary colormap"
+  brg: "Blue-Red-Green, good for RGB-like data"
+  brg_r: "Reversed Blue-Red-Green colormap"
+  cubehelix: "Helix-based colors, good for sequential data"
+  cubehelix_r: "Reversed helix-based colormap"
+  flag: "Red-white-blue, good for flag-like data"
+  flag_r: "Reversed flag colormap"
+  gist_earth: "Earth-like colors, good for geographical data"
+  gist_earth_r: "Reversed earth-like colormap"
+  gist_gray: "Gray-based, good for grayscale data"
+  gist_gray_r: "Reversed gray-based colormap"
+  gist_heat: "Heat-based, good for temperature data"
+  gist_heat_r: "Reversed heat-based colormap"
+  gist_ncar: "NCAR colors, good for atmospheric data"
+  gist_ncar_r: "Reversed NCAR colormap"
+  gist_rainbow: "Rainbow-like, good for spectral data"
+  gist_rainbow_r: "Reversed rainbow-like colormap"
+  gist_stern: "Stern colors, good for specialized visualization"
+  gist_stern_r: "Reversed stern colormap"
+  gist_yarg: "Yellow-arg, good for specialized data"
+  gist_yarg_r: "Reversed yellow-arg colormap"
+  gnuplot: "Gnuplot-like colors, good for technical data"
+  gnuplot_r: "Reversed gnuplot colormap"
+  gnuplot2: "Gnuplot variant, good for technical data"
+  gnuplot2_r: "Reversed gnuplot2 colormap"
+  jet: "Jet colors, good for legacy compatibility"
+  jet_r: "Reversed jet colormap"
+  nipy_spectral: "Neuroimaging spectral, good for brain data"
+  nipy_spectral_r: "Reversed neuroimaging spectral colormap"
+  ocean: "Ocean-like colors, good for marine data"
+  ocean_r: "Reversed ocean colormap"
+  prism: "Rainbow-like, good for spectral data"
+  prism_r: "Reversed rainbow-like colormap"
+  rainbow: "Rainbow colors, good for spectral data"
+  rainbow_r: "Reversed rainbow colormap"
+  terrain: "Terrain-like colors, good for geographical data"
+  terrain_r: "Reversed terrain colormap"
+  grey: "Gray-based, alternative spelling"
+  grey_r: "Reversed gray-based colormap (alternative spelling)"
+  gist_grey: "Gray-based, alternative spelling"
+  gist_grey_r: "Reversed gray-based colormap (alternative spelling)"
+  gist_yerg: "Specialized colormap (matplotlib)"
+  gist_yerg_r: "Reversed specialized colormap (matplotlib)"
+  Grays: "Single gray hue, good for neutral data (light to dark)"
+  Grays_r: "Single gray hue, good for neutral data (dark to light)"
+
+# =============================
+# RECOMMENDED COLORMAPS FOR RNA ANALYSIS
+# =============================
+# Curated selection specifically for RNA structure visualization
+rna_analysis:
+  # Probability data (base-pairing probabilities) - Light to Dark
+  viridis: "Best for probability data - perceptually uniform, colorblind-friendly (dark to light)"
+  viridis_r: "Best for probability data - perceptually uniform, colorblind-friendly (light to dark)"
+  plasma: "High contrast for probability differences (dark to light)"
+  plasma_r: "High contrast for probability differences (light to dark)"
+  inferno: "Dramatic visualization of high probability regions (dark to light)"
+  inferno_r: "Dramatic visualization of high probability regions (light to dark)"
+  magma: "Smooth probability transitions (dark to light)"
+  magma_r: "Smooth probability transitions (light to dark)"
+  cividis: "Colorblind-friendly probability visualization (dark to light)"
+  cividis_r: "Colorblind-friendly probability visualization (light to dark)"
+  
+  # Base-pairing strength (diverging)
+  coolwarm: "Excellent for base-pairing strength - blue (weak) to red (strong)"
+  RdBu_r: "Standard red-blue for base-pairing strength"
+  RdBu: "Standard red-blue for base-pairing strength (reversed)"
+  seismic: "High contrast for structural differences"
+  Spectral_r: "Rainbow-like for multiple probability levels"
+  Spectral: "Rainbow-like for multiple probability levels (reversed)"
+  
+  # Structure elements - Light to Dark
+  Blues: "Good for paired regions (light to dark)"
+  Blues_r: "Good for paired regions (dark to light)"
+  Greens: "Good for unpaired regions (light to dark)"
+  Greens_r: "Good for unpaired regions (dark to light)"
+  Oranges: "Good for junction regions (light to dark)"
+  Oranges_r: "Good for junction regions (dark to light)"
+  Purples: "Good for special structural elements (light to dark)"
+  Purples_r: "Good for special structural elements (dark to light)"
+
+# =============================
+# DEFAULT COLORMAP
+# =============================
+# Default colormap for the pipeline
+default: "Spectral_r"
+
+# =============================
+# CATEGORY DESCRIPTIONS
+# =============================
+categories:
+  sequential: "Single-hue progressions, ideal for probability data and continuous measurements"
+  diverging: "Two-hue progressions, ideal for data with a meaningful center point"
+  qualitative: "Distinct colors for categorical data"
+  cyclic: "Circular color schemes for periodic data"
+  specialized: "Specialized colormaps for specific applications"
+  rna_analysis: "Curated selection specifically for RNA structure visualization"
+
+# =============================
+# COLORMAP NAMING CONVENTION
+# =============================
+# Reverse colormaps are denoted with '_r' suffix
+# Examples:
+#   viridis    - Dark to light progression
+#   viridis_r  - Light to dark progression
+#   coolwarm   - Blue (low) to red (high)
+#   coolwarm_r - Red (low) to blue (high)
+#
+# Usage in config.yaml:
+#   colormap:
+#     name: viridis_r    # Light to dark
+#     name: viridis      # Dark to light
+#
+# This allows you to choose the direction that best fits your data interpretation 

@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+build/
+dist/
+*.spec
+!RNAfold_App/RNAfold_to_RNArtist.spec
+# Keep the main spec, ignore temp specs
+outputs/
+temp_gui_profile.json
+*.log
+.DS_Store
+.vscode/
+.idea/
+venv/
+env/

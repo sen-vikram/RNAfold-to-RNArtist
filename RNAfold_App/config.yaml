@@ -1,0 +1,102 @@
+# RNAfold to RNArtist Pipeline - YAML Configuration Template
+
+# =============================
+# Colormap Configuration
+# =============================
+colormap:
+  name: coolwarm           # Options: Spectral_r, viridis, plasma, inferno, magma, cividis, RdBu_r, coolwarm, seismic, bwr, PiYG, PRGn, RdYlBu_r
+  reverse: false             # true to reverse the colormap
+  min_value: 0.0             # Minimum value for color scaling
+  max_value: 1.0             # Maximum value for color scaling
+  discrete_levels: null      # Set to an integer for discrete color levels, or null for continuous
+
+# =============================
+# Coloring Mode Configuration
+# =============================
+coloring_mode:
+  # Mode options:
+  #   'paired_only': Paired bases colored by Pi, unpaired bases colored by 1-Pi (ViennaRNA style)
+  #   'all_pi': All bases colored by Pi, regardless of structure
+  mode: all_pi           # Options: paired_only, all_pi
+  threshold: 0.01             # Minimum probability to consider for coloring (if applicable)
+  # For future: add more modes (e.g., unpaired_only, custom_statistic)
+
+# =============================
+# Color Bar Output Configuration
+# =============================
+colorbar:
+  format: ["svg", "png"]
+  orientation: horizontal
+  width: 10    # Colorbar width in inches (overrides output.width for colorbar)
+  height: 2    # Colorbar height in inches (overrides output.height for colorbar)
+  # Note: SVG/PDF/EPS use transparent background, PNG uses white background
+
+# =============================
+# Layout & Style Customization
+# =============================
+layout:
+  algorithm: default         # Options: default, circular, radial, force-directed, user-defined
+  junction_layouts:
+    - type: 3                # Junction type (e.g., 3 for 3-way)
+      out_ids: [nw, ne]      # Compass directions for outgoing helices
+    # Add more as needed
+
+output:
+  width: 8     # Default output width in inches
+  height: 1.5  # Default output height in inches
+
+font:
+  size: 16                   # Font size for base letters
+
+line:
+  width: 2                   # Default line thickness
+  helix_width: 3             # Helix-specific line thickness
+  junction_width: 2          # Junction-specific line thickness
+
+transparency: 0.8            # Alpha value for structure elements (0.0-1.0)
+
+# =============================
+# Theme & Element Customization
+# =============================
+theme:
+   name: publication          # Pre-defined or user-defined theme (uncomment to use)
+   details_level: 4           # 1 (minimal) to 5 (maximal) (uncomment to override default)
+  # base_colors:
+  #   A: "#A0ECF5"
+  #   U: "#9157E5"
+  #   G: "darkgreen"
+  #   C: "#E557E5"
+   base_label_color: black    # Color for base letters (uncomment to override default)
+   # Set nucleotide outline color to match background (white) to make outline invisible
+   color:
+     - type: n
+       value: white
+   # Note: RNArtistCore does not support removing nucleotide outlines via config
+   # The outline will remain visible even with line width set to 0
+  # background_color: white    # Background color (uncomment to override default)
+  # custom_colors:
+  #   - type: helix
+  #     value: "#0088FF"
+  #     location: [1, 10]      # Optional: restrict to specific locations
+  #   - type: junction
+  #     value: "#FFDD00"
+  #     shape: circle
+  #     location: [20, 30]
+  # show:
+  #   - type: helix
+  #     location: [5, 15]
+  # hide:
+  #   - type: single_strand
+  #     location: [50, 60]
+  # line:
+  #   - type: helix
+  #     value: 4
+  #     location: [1, 10]
+
+# =============================
+# Advanced/Experimental Options
+# =============================
+advanced:
+  export_layout: true        # Export layout information for reuse
+  import_layout: null        # Path to import a custom layout
+  pseudoknot_support: false  # Enable if pseudoknots are to be visualized 
