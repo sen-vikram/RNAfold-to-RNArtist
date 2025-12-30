@@ -45,10 +45,11 @@ This application (v5) represents a complete overhaul of the original scripts, mo
 
 The easiest way to use the app. No Python installation required.
 
-1. Navigate to:
-   `RNAfold_App/dist/RNAfold_to_RNArtist/`
-2. Double-click **`RNAfold_to_RNArtist.exe`**.
-3. The app will launch instantly.
+1.  Go to the **[Releases](../../releases)** section of this repository.
+2.  Download the **`RNAfold_to_RNArtist_Windows.zip`** file.
+3.  Extract the zip file to a folder of your choice.
+4.  Double-click **`RNAfold_to_RNArtist.exe`**.
+5.  The app will launch instantly.
 
 ### Option B: Run from Source (Developers)
 
