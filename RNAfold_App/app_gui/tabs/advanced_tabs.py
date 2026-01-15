@@ -79,3 +79,32 @@ class EnergyTab:
             "param_set": self.param_set_var.get(),
             "salt": salt
         }
+
+class PerformanceTab:
+    def __init__(self, parent_frame, app_instance, default_workers=10):
+        self.app = app_instance
+        self.frame = parent_frame
+        
+        # CPU Cores
+        self.workers_var = ctk.StringVar(value=str(default_workers))
+        
+        row = ctk.CTkFrame(self.frame, fg_color="transparent")
+        row.pack(anchor="w", padx=20, pady=10)
+        
+        ctk.CTkLabel(row, text="Parallel Workers (CPU Cores):", font=("Arial", 12, "bold")).pack(side="left", padx=5)
+        self.entry = ctk.CTkEntry(row, textvariable=self.workers_var, width=60)
+        self.entry.pack(side="left", padx=5)
+        
+        ctk.CTkLabel(row, text="(0 = Auto-detect efficient max)", text_color="gray", font=("Arial", 11)).pack(side="left", padx=5)
+        
+        # User requested "make settings default".
+        # Explaining how:
+        ctk.CTkLabel(self.frame, text="Note: To make this permanent, update config.yaml or use this setting every time.", 
+                     text_color="gray", font=("Arial", 10)).pack(anchor="w", padx=25)
+
+    def get_values(self):
+        try:
+            val = int(self.workers_var.get())
+        except:
+            val = 0
+        return {"max_workers": val}

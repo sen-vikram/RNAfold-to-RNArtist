@@ -8,13 +8,24 @@ from .ui_components import AccordionFrame
 from .tabs.input_tab import InputTab
 from .tabs.params_tab import ParamsTab
 from .tabs.constraints_tab import ConstraintsTab
-from .tabs.advanced_tabs import DanglesTab, EnergyTab
+from .tabs.advanced_tabs import DanglesTab, EnergyTab, PerformanceTab
 from .tabs.visual_tab import VisualTab
 
 # Import Engine Programmatic Entry Point
 # Assuming the file is in the root directory relative to execution
 sys.path.append(os.getcwd()) 
 import RNAfold_to_RNArtist_engine as engine
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class RNAfoldApp(ctk.CTk):
     def __init__(self):
@@ -23,6 +34,12 @@ class RNAfoldApp(ctk.CTk):
         # Configure window
         self.title("RNAfold to RNArtist")
         self.geometry("1000x900")
+        
+        # Set Icon
+        try:
+            self.iconbitmap(resource_path("rna_icon.ico"))
+        except Exception as e:
+            print(f"Warning: Could not set icon: {e}")
         
         # Grid: Row 0 = Scrollable Content, Row 1 = Footer (Run Button)
         self.grid_rowconfigure(0, weight=1)
@@ -69,9 +86,17 @@ class RNAfoldApp(ctk.CTk):
         self.acc_visual.grid(row=6, column=0, sticky="ew", pady=2)
         self.visual_tab = VisualTab(self.acc_visual.get_content_frame(), self)
 
+        # 6. Performance Options
+        self.acc_perf = AccordionFrame(self.scroll_frame, "Performance Options (Parallel Processing)", start_collapsed=True)
+        self.acc_perf.grid(row=7, column=0, sticky="ew", pady=2)
+        
+        # Get default from loaded config
+        def_workers = engine.CONFIG.get('performance', {}).get('max_workers', 10)
+        self.performance_ui = PerformanceTab(self.acc_perf.get_content_frame(), self, default_workers=def_workers)
+
         # --- C. Log Area ---
         self.log_frame = ctk.CTkFrame(self.scroll_frame)
-        self.log_frame.grid(row=7, column=0, sticky="ew", pady=20)
+        self.log_frame.grid(row=8, column=0, sticky="ew", pady=20)
         ctk.CTkLabel(self.log_frame, text="Execution Log:").pack(anchor="w", padx=5)
         self.log_box = ctk.CTkTextbox(self.log_frame, height=150, font=("Consolas", 11))
         self.log_box.pack(fill="x", padx=5, pady=5)
@@ -80,16 +105,26 @@ class RNAfoldApp(ctk.CTk):
         # ------------------------
         # 2. Footer (Run Button)
         # ------------------------
-        self.footer = ctk.CTkFrame(self, height=80)
-        self.footer.grid(row=1, column=0, sticky="ew")
+        self.footer_frame = ctk.CTkFrame(self)
+        self.footer_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
+        self.footer_frame.grid_columnconfigure(0, weight=1)
         
-        self.status_label = ctk.CTkLabel(self.footer, text="Ready", text_color="gray")
-        self.status_label.pack(side="left", padx=20)
-
-        self.run_btn = ctk.CTkButton(self.footer, text="RUN ENGINE", command=self.start_engine, 
-                                     font=("Arial", 16, "bold"), fg_color="green", hover_color="darkgreen", 
-                                     width=200, height=40)
-        self.run_btn.pack(side="right", padx=20, pady=20)
+        # Status Label (left side)
+        self.status_label = ctk.CTkLabel(self.footer_frame, text="Ready", text_color="gray", font=("Arial", 12))
+        self.status_label.grid(row=0, column=0, sticky="w", padx=10)
+        
+        # Run Button (right side)
+        self.run_btn = ctk.CTkButton(
+            self.footer_frame, 
+            text="RUN ENGINE", 
+            command=self.start_engine, 
+            width=200, 
+            height=50, 
+            font=("Arial", 16, "bold"), 
+            fg_color="green", 
+            hover_color="darkgreen"
+        )
+        self.run_btn.grid(row=0, column=1, sticky="e", padx=10, pady=10)
 
     # ------------------
     # Helper Methods
@@ -112,6 +147,10 @@ class RNAfoldApp(ctk.CTk):
             "algorithms": self.params_ui.get_algorithms(),
         }
         profile.update(self.visual_tab.get_data())
+        
+        # Add Performance
+        profile['performance'] = self.performance_ui.get_values()
+        
         return profile
 
     def get_input_path(self):

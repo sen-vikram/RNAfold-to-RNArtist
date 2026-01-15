@@ -3,6 +3,8 @@ import sys
 import subprocess
 import RNA
 import numpy as np
+import matplotlib
+matplotlib.use('Agg') # Force non-interactive backend to avoid GUI/SVG dependency issues
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import yaml
@@ -13,21 +15,40 @@ import shutil
 import json
 import argparse
 
+import traceback
+
+# Explicitly import matplotlib backends was removed. 
+# We rely on PyInstaller hooks and the Agg backend text above.
+
 # =============================
 # YAML CONFIG LOADING
 # =============================
+
+# Get the directory where this engine file is located
+_ENGINE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def load_config(config_path='config.yaml'):
+    """Load configuration from YAML file with multiple path resolution."""
+    paths_to_check = []
+    
+    # 1. Check bundled path for frozen apps (PyInstaller)
     if getattr(sys, 'frozen', False):
-        base_path = sys._MEIPASS
-        # Check bundled config first
-        bundled_path = os.path.join(base_path, config_path)
-        if os.path.exists(bundled_path):
-            with open(bundled_path, 'r') as f:
-                return yaml.safe_load(f)
-                
-    if os.path.exists(config_path):
-        with open(config_path, 'r') as f:
-            return yaml.safe_load(f)
+        paths_to_check.append(os.path.join(sys._MEIPASS, config_path))
+    
+    # 2. Check relative to the engine file location (most reliable)
+    paths_to_check.append(os.path.join(_ENGINE_DIR, config_path))
+    
+    # 3. Check current working directory (fallback)
+    paths_to_check.append(config_path)
+    
+    for path in paths_to_check:
+        if os.path.exists(path):
+            try:
+                with open(path, 'r') as f:
+                    return yaml.safe_load(f)
+            except yaml.YAMLError as e:
+                print(f"Warning: Error parsing config file {path}: {e}")
+    
     return {}
 
 CONFIG = load_config()
@@ -50,12 +71,19 @@ def get_nested_config(keys, default=None):
 # COLORMAP CONFIGURATION (from external YAML file)
 # =============================================================================
 def load_colormaps(colormaps_file='colormaps.yaml'):
-    """Load colormaps from external YAML file with validation."""
+    """Load colormaps from external YAML file with multiple path resolution."""
+    paths_to_check = []
     
-    paths_to_check = [colormaps_file]
+    # 1. Check bundled path for frozen apps (PyInstaller)
     if getattr(sys, 'frozen', False):
-         paths_to_check.insert(0, os.path.join(sys._MEIPASS, colormaps_file))
-         
+        paths_to_check.append(os.path.join(sys._MEIPASS, colormaps_file))
+    
+    # 2. Check relative to the engine file location (most reliable)
+    paths_to_check.append(os.path.join(_ENGINE_DIR, colormaps_file))
+    
+    # 3. Check current working directory (fallback)
+    paths_to_check.append(colormaps_file)
+    
     for path in paths_to_check:
         if os.path.exists(path):
             try:
@@ -63,7 +91,7 @@ def load_colormaps(colormaps_file='colormaps.yaml'):
                     return yaml.safe_load(f)
             except yaml.YAMLError as e:
                 print(f"Warning: Error parsing colormaps file {path}: {e}")
-                
+    
     print(f"Warning: Colormaps file '{colormaps_file}' not found. Using built-in defaults.")
     return None
 
@@ -410,12 +438,14 @@ def map_probabilities_to_colors(pi_values, paired_status, colormap_name=SELECTED
         is_valid, description = validate_colormap(colormap_name, COLORMAPS_DATA)
     
     try:
+        # print(f"Debug: Getting cmap '{colormap_name}' (Type: {type(colormap_name)})")
         cmap = plt.get_cmap(colormap_name)
     except ValueError:
         print(f"Error: Failed to load colormap '{colormap_name}'. Using 'viridis' instead.")
         cmap = plt.get_cmap('viridis')
     
     colors = []
+    # print(f"Debug: Mapping {len(pi_values)} probabilities to colors using {coloring_mode}") # Verbose debug
     for pi, is_paired in zip(pi_values, paired_status):
         if coloring_mode == 'paired_only':
             value = min(pi, 1.0) if is_paired else min(1.0 - pi, 1.0)
@@ -443,7 +473,20 @@ def save_probability_results(seq, pi_values, colors, out_dir, colormap_name=SELE
     
     # Get color bar configuration from YAML
     colorbar_cfg = CONFIG.get('colorbar', {})
-    cb_formats = colorbar_cfg.get('format', 'svg')
+    cb_formats = colorbar_cfg.get('format', 'png')  # Use PNG by default (SVG has bundling issues)
+    
+    # Force sanitization of formats to avoid SVG backend trigger
+    if isinstance(cb_formats, str):
+        cb_formats = [cb_formats]
+    
+    # Filter out 'svg' check removed - backend is now bundled
+    # if 'svg' in cb_formats:
+    #    print("Warning: SVG format detected in configuration. Removing it to prevent backend errors.")
+    #    cb_formats = [fmt for fmt in cb_formats if fmt != 'svg']
+    #    if not cb_formats:
+    #        cb_formats = ['png']
+    
+    # print(f"Debug: Generating Colorbar. Formats: {cb_formats}")
     cb_orientation = colorbar_cfg.get('orientation', 'horizontal')
     # Add colorbar-specific width/height support
     cb_width = safe_float(colorbar_cfg.get('width', get_nested_config(['output', 'width'], 8)), 8)
@@ -551,8 +594,8 @@ def get_theme_config():
     }
 
 def create_rnartist_script(vienna_file, basepair_probs_file, output_dir, seq, plist, colormap_name=SELECTED_COLORMAP, sequence_name="sequence", coloring_mode=COLORING_MODE):
-    output_dir = output_dir.replace('\\', '/').replace('\\', '/')
-    vienna_file = os.path.abspath(vienna_file).replace('\\', '/').replace('\\', '/')
+    output_dir = os.path.abspath(output_dir).replace('\\', '/')
+    vienna_file = os.path.abspath(vienna_file).replace('\\', '/')
     theme_cfg = get_theme_config()
     details_level = theme_cfg['details_level']
     base_label_color = theme_cfg['base_label_color']
@@ -730,13 +773,22 @@ def run_rnartist_visualization(script_path, jar_path):
         cmd = f'java -jar "{jar_path}" "{script_path}"'
         print(f"Running RNArtistCore command: {cmd}")
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        
+        # Always print stdout/stderr for debugging
+        if result.stdout:
+            print(f"RNArtist Output:\n{result.stdout}")
+        if result.stderr:
+            print(f"RNArtist Errors/Warnings:\n{result.stderr}")
+            
         if result.returncode == 0:
-            print("RNArtistCore visualization completed successfully!")
+            print("RNArtistCore visualization completed successfully (process exited with 0).")
             print("Output files generated in the output directory.")
         else:
-            print(f"RNArtistCore failed with error: {result.stderr}")
+            print(f"RNArtistCore failed with return code {result.returncode}")
     except Exception as e:
         print(f"Error running RNArtistCore: {e}")
+        import traceback
+        traceback.print_exc()
 
 def process_sequence(header, seq, jar_path, outputs_dir, errors, profile={}):
     sequence_name = get_sequence_name(header)
@@ -815,16 +867,34 @@ def process_sequence_wrapper(args):
     # Helper for ProcessPoolExecutor: unpack args and call process_sequence
     return process_sequence(*args)
 
-def check_java_available():
+
+def process_sequence_worker(args):
+    """
+    Worker function for ProcessPoolExecutor.
+    args: (header, seq, jar_path, out_dir, profile)
+    Returns: (result_dict, error_list)
+    """
+    header, seq, jar_path, out_dir, profile = args
+    local_errors = []
+    try:
+        # Errors list is passed but local to the process. We return it.
+        result = process_sequence(header, seq, jar_path, out_dir, local_errors, profile)
+        return result, local_errors
+    except Exception as e:
+        return None, [(get_sequence_name(header), str(e))]
+
+def check_java_available(log_callback=print):
     """Check if Java is available in the system path."""
+    import shutil
     java_path = shutil.which('java')
     if java_path is None:
-        print("ERROR: Java is not installed or not found in your system PATH.")
-        print("Please install Java (version 8 or higher) and ensure 'java' is available in your PATH.")
-        print("Download: https://adoptium.net/ or https://www.java.com/")
-        sys.exit(1)
+        log_callback("ERROR: Java is not installed or not found in your system PATH.")
+        log_callback("Please install Java (version 8 or higher) and restart the app.")
+        log_callback("Download: https://adoptium.net/ or https://www.java.com/")
+        return False
     else:
-        print(f"Java found at: {java_path}")
+        log_callback(f"Java found at: {java_path}")
+        return True
 
 # =============================================================================
 # PROGRAMMATIC ENTRY POINT (For GUI Integration)
@@ -845,12 +915,19 @@ def run_engine_programmatic(input_path, profile_path=None, output_dir="outputs",
         else:
             print(msg)
 
-    check_java_available()
+    log("Debug: Engine started.")
+    log("Debug: Checking for Java...")
+    if not check_java_available(log):
+        log("Debug: Java check FAILED.")
+        return False
+    log("Debug: Java check passed.")
+    
     log("=" * 60)
     log("RNAfold to RNArtist Engine v5 (Profile Enabled)")
     log("=" * 60)
     
     # Load Profile
+    log("Debug: Loading profile...")
     profile = load_profile(profile_path)
     if profile:
         log(f"Loaded Profile: {profile_path}")
@@ -885,8 +962,23 @@ def run_engine_programmatic(input_path, profile_path=None, output_dir="outputs",
 
     # Create Run Folder
     import datetime
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    run_output_dir = os.path.join(output_dir, f"run_{timestamp}")
+    
+    # Determine Output Structure from Config
+    output_cfg = CONFIG.get('output', {})
+    structure_mode = output_cfg.get('structure', 'nested_timestamp') # Default to nested
+    
+    if structure_mode == 'flat':
+        # Simple mode: output/sequence_name (overwrites)
+        run_output_dir = output_dir
+    elif structure_mode == 'date_group':
+        # Date grouped: output/YYYY-MM-DD/sequence_name
+        date_str = datetime.datetime.now().strftime("%Y-%m-%d")
+        run_output_dir = os.path.join(output_dir, date_str)
+    else: 
+        # Default: output/run_TIMESTAMP/sequence_name
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        run_output_dir = os.path.join(output_dir, f"run_{timestamp}")
+
     os.makedirs(run_output_dir, exist_ok=True)
     
     all_results = []
@@ -923,30 +1015,81 @@ def run_engine_programmatic(input_path, profile_path=None, output_dir="outputs",
         log("No valid sequences to process.")
         return False
 
-    # Execute Sequentially (Safer for compiled exe & stability)
-    # Can switch to threads if really needed, but Multiprocessing is tricky in PyInstaller
-    log(f"\nProcessing {len(jobs)} sequences...")
+    # Determine workers
+    # Check profile (from GUI) first
+    max_workers = 10
     
-    count = 0
-    for job in jobs:
-        count += 1
-        header, seq, j_path, out_dir, errs, prof = job
-        seq_name = get_sequence_name(header)
+    # Try profile first
+    if profile:
+         prof_perf = profile.get('performance', {})
+         if isinstance(prof_perf, dict):
+              val = prof_perf.get('max_workers')
+              if val is not None:
+                  max_workers = val
+    else:
+        # Fallback to config
+        perf_cfg = CONFIG.get('performance', {})
+        max_workers = perf_cfg.get('max_workers', 10)
+    
+    # If 0 or None, use auto-detect
+    if not max_workers or max_workers <= 0:
+        max_workers = os.cpu_count() or 4
         
-        # log(f"[{count}/{len(jobs)}] Processing {seq_name}...")
-        try:
-            # Direct call
-            result = process_sequence(header, seq, j_path, out_dir, errs, prof)
-            if result:
-                all_results.append(result)
-                log(f"  [OK] {seq_name}")
-            else:
-                log(f"  [FAIL] {seq_name}")
+    # Execute in Parallel (Multiprocessing)
+    log(f"\nProcessing {len(jobs)} sequences using Multiprocessing (Workers: {max_workers})...")
+    
+    count = 0 
+    
+    # Ensure workers count is valid for ProcessPoolExecutor (must be > 0 or None)
+    # If max_workers is None, it uses default.
+    # We already set it to explicit count unless 0.
+    
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+        # Allow passing errors via wrapper? No, wrapper handles it.
+        # Prepare arguments for worker (remove 'errors' list from tuple)
+        # Job format: (header, seq, j_path, out_dir, errs, prof)
+        # New format: (header, seq, j_path, out_dir, prof)
+        worker_args = []
+        for job in jobs:
+            header, seq, j_path, out_dir, _, prof = job
+            worker_args.append((header, seq, j_path, out_dir, prof))
+            
+        # Submit all jobs
+        futures = {executor.submit(process_sequence_worker, args): args for args in worker_args}
+        
+        for future in concurrent.futures.as_completed(futures):
+            count += 1
+            # Retrieve original args if needed for debugging? No, result usually has info.
+            # But if exception occurs in worker BEFORE process_sequence logic, we might not get sequence_name.
+            # Actually process_sequence_worker catches top-level exception and returns name from header.
+            
+            try:
+                result, errs = future.result()
+                
+                # We need sequence name for logging
+                # If result is None, errs might have it.
+                seq_name = "Unknown"
+                if result:
+                    seq_name = result['sequence_name']
+                elif errs:
+                    seq_name = errs[0][0] # (name, msg)
+                
+                if result:
+                    all_results.append(result)
+                    log(f"  [OK] {seq_name}")
+                else:
+                    log(f"  [FAIL] {seq_name}")
+                
                 if errs:
                     errors.extend(errs)
-        except Exception as e:
-            log(f"  [ERROR] {seq_name}: {e}")
-            errors.append((seq_name, str(e)))
+                    # For verbose errors in main log:
+                    for name, msg in errs:
+                         log(f"    Error ({name}): {msg}")
+
+            except Exception as e:
+                log(f"  [CRITICAL ERROR] A worker process failed: {e}")
+                log(traceback.format_exc())
+                errors.append(("Unknown", str(e)))
 
     # Summary
     log("-" * 40)

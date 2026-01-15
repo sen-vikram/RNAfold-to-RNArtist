@@ -25,7 +25,7 @@ coloring_mode:
 # Color Bar Output Configuration
 # =============================
 colorbar:
-  format: ["svg", "png"]
+  format: [svg, png]  # SVG/PNG enabled
   orientation: horizontal
   width: 10    # Colorbar width in inches (overrides output.width for colorbar)
   height: 2    # Colorbar height in inches (overrides output.height for colorbar)
@@ -44,6 +44,11 @@ layout:
 output:
   width: 8     # Default output width in inches
   height: 1.5  # Default output height in inches
+  # Output folder structure:
+  #   'nested_timestamp': output/run_YYYY-MM-DD_HH-mm-ss/seq_name (Default, keeps history)
+  #   'flat':             output/seq_name (Overwrites previous runs)
+  #   'date_group':       output/YYYY-MM-DD/seq_name
+  structure: flat
 
 font:
   size: 16                   # Font size for base letters
@@ -100,3 +105,9 @@ advanced:
   export_layout: true        # Export layout information for reuse
   import_layout: null        # Path to import a custom layout
   pseudoknot_support: false  # Enable if pseudoknots are to be visualized 
+
+# =============================
+# Performance Tuning
+# =============================
+performance:
+  max_workers: 6            # Number of parallel workers (Set 0 for auto-detect based on CPU cores) 
